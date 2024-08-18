@@ -1,0 +1,29 @@
+# first install the nginx ingress controller on the AKS cluster(https://spacelift.io/blog/kubernetes-ingress) then make the ingress file and apply it.
+# access the app external_ip/main/demoapp/home and external_ip/shopping/demoappshop/home
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - path: /home(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: home-app-service
+            port:
+              number: 8080 #30001
+      - path: /shopping(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: shopping-app-service
+            port:
+              number: 8080 #30001
